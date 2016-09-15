@@ -1,0 +1,107 @@
+// package the generated Java class lives in; no need to change this
+%package "parser";
+
+// name of the generated Java class; no need to change this
+%class "Parser";
+
+// no need to change this either
+%embed {:
+	// turn off automated error recovery
+	@Override
+	protected void recoverFromError(Symbol token, TokenStream in) throws java.io.IOException, Exception {
+		super.recoverFromError(new Symbol(0), in);
+	}
+:};
+
+// the list of all terminals; no need to change this
+%terminals MODULE, INT, VOID, IF, ELSE, WHILE, RETURN, BREAK, BOOLEAN, PUBLIC, TRUE, FALSE,
+           INT_LITERAL, STRING_LITERAL, ID, TYPE, IMPORT,
+           PLUS, MINUS, TIMES, DIV, MOD, EQEQ, NEQ, LEQ, GEQ, LT, GT,
+           LBRACKET, RPAREN, COMMA, RCURLY, LCURLY, SEMICOLON, RBRACKET, LPAREN, EQL;
+           
+// declaration of start symbol; no need to change this
+%goal Module;
+
+/* TODO: Flesh out the rule for Module, and add rules for other nonterminals. Here is an example
+         of a rule you may want to add:
+         
+   Accessibility = PUBLIC
+		  |
+		  ;
+  */
+
+
+Accessibility = PUBLIC |;
+
+Module = MODULE ID LCURLY Import ModuleDeclaration RCURLY;
+
+Import = ImportTerminal Import |;
+ImportTerminal = IMPORT ID SEMICOLON;
+
+ModuleDeclaration = ModuleDeclarationTerminal ModuleDeclaration |;
+ModuleDeclarationTerminal = FunctionDeclaration | FieldDeclaration | TypeDeclaration;
+
+FunctionDeclaration = Accessibility TypeName ID LPAREN ParameterList RPAREN LCURLY StatementList RCURLY;
+FieldDeclaration = Accessibility TypeName ID SEMICOLON;
+TypeDeclaration = Accessibility TYPE ID EQL STRING_LITERAL SEMICOLON;
+
+TypeName = PrimitiveType | ID | ArrayType;
+PrimitiveType = VOID | BOOLEAN | INT;
+ArrayType = ID LBRACKET RBRACKET | PrimitiveType LBRACKET RBRACKET | ArrayType LBRACKET RBRACKET;
+
+ParameterList = ParameterListHelper |;
+ParameterListHelper = Parameter | Parameter COMMA ParameterListHelper;
+Parameter = TypeName ID;
+
+Statement = LocalVariableDeclaration
+			| BlockStatement
+			| IfStatement
+			| WhileStatement
+			| BreakStatement
+			| ReturnStatement
+			| ExpressionStatement;
+			
+IfStatement = IfOnlyStatement | IfOnlyStatement ElseOnlyStatement;
+IfOnlyStatement = IF LPAREN Expression RPAREN Statement;
+ElseOnlyStatement = ELSE Statement;
+
+LocalVariableDeclaration = TypeName ID SEMICOLON;
+WhileStatement = WHILE LPAREN Expression RPAREN Statement;
+BreakStatement = BREAK SEMICOLON;
+ReturnStatement = RETURN Expression SEMICOLON | RETURN SEMICOLON;
+ExpressionStatement = Expression SEMICOLON;
+BlockStatement = LCURLY StatementList RCURLY;
+StatementList = Statement StatementList |;
+
+
+
+
+Expression = Assignment | RHSExpression;
+Assignment = LHSExpression EQL Expression;
+
+LHSExpression = ID | ArrayAccess;
+ArrayAccess = LHSExpression LBRACKET Expression RBRACKET;
+
+RHSExpression = ArithmeticExpression | ArithmeticExpression ComparisonOperator ArithmeticExpression;
+ComparisonOperator = EQEQ | NEQ | LT | LEQ | GT | GEQ;
+
+ArithmeticExpression = ArithmeticExpression AdditiveOperator Term | Term;
+AdditiveOperator = PLUS | MINUS;
+
+Term = Term MultiplicativeOperator Factor | Factor;
+MultiplicativeOperator = TIMES | DIV | MOD;
+
+Factor = MINUS Factor | PrimaryExpression;
+PrimaryExpression = LHSExpression | FunctionCall | ArrayExpression | STRING_LITERAL | INT_LITERAL | TRUE | FALSE | ParenthesizedExpression;
+ 
+FunctionCall = ID LPAREN ArgumentsList RPAREN;
+ArgumentsList = Argument | Argument COMMA ArgumentsList;
+Argument = Expression |;
+
+ArrayExpression = LBRACKET NonEmptyExpressionList RBRACKET;
+NonEmptyExpressionList = Expression | Expression COMMA NonEmptyExpressionList;
+
+ParenthesizedExpression = LPAREN Expression RPAREN;
+
+/**/
+

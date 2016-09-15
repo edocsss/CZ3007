@@ -193,6 +193,38 @@ public class LexerTests {
 
 	}
 	
+	@Test
+	public void testStringLiteral3() throws AssertionError {
+		runtest("\"\\n\"", 
+				new Token(STRING_LITERAL, 0, 0, "\\n"),
+				new Token(EOF, 0, 4, ""));
+
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testStringLiteral4() throws AssertionError {
+		runtest("\"\n\"", 
+				new Token(STRING_LITERAL, 0, 0, "\\n"),
+				new Token(EOF, 0, 4, ""));
+
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testStringLiteral5() throws AssertionError {
+		runtest("\"\r\"", 
+				new Token(STRING_LITERAL, 0, 0, "\\n"),
+				new Token(EOF, 0, 4, ""));
+
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testStringLiteral6() throws AssertionError {
+		runtest("\"\r\n\"", 
+				new Token(STRING_LITERAL, 0, 0, "\\n"),
+				new Token(EOF, 0, 4, ""));
+
+	}
+	
 	@Test(expected = AssertionError.class)
 	public void testStringLiteral_fail1() throws AssertionError {
 		runtest("\"s1\"s2\"", 
@@ -227,6 +259,27 @@ public class LexerTests {
 		runtest("\"\\\\\"",
 				new Token(STRING_LITERAL, 0, 0, "\\\\"),
 				new Token(EOF, 0, 4, ""));
+	}
+	
+	@Test
+	public void testRandom3() throws AssertionError {
+		runtest("\"\"",
+				new Token(STRING_LITERAL, 0, 0, ""),
+				new Token(EOF, 0, 2, ""));
+	}
+	
+	@Test
+	public void testRandom4() throws AssertionError {
+		runtest("\"\"",
+				new Token(STRING_LITERAL, 0, 0, ""),
+				new Token(EOF, 0, 2, ""));
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void testRandom5() throws AssertionError {
+		runtest("a\"",
+				new Token(STRING_LITERAL, 0, 0, ""),
+				new Token(EOF, 0, 2, ""));
 	}
 	
 	@Test 

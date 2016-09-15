@@ -106,7 +106,7 @@ Alphabets = [a-zA-Z]
 
 
 /* STRING_LITERAL */
-\"[^\"\n]*\"	{
+\"[^\"\r\n]*\"	{
 					String text = yytext();
 					return new Token(STRING_LITERAL, yyline, yycolumn, text.substring(1, text.length() - 1)); 
 				}
