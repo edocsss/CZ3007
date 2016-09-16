@@ -153,17 +153,13 @@ public class ParserTests {
 		runtest("module Test{ public int[][] testArray() { test() > (100 * 200 / 300 % 100); } }");
 		runtest("module Test{ public int[][] testArray() { test(100, \"test\", true, false) > (100 * 200 / 300 % 100); } }");
 		runtest("module Test{ public int[][] testArray() { [1, 2, 3, true, false, test(199, \"testasd\")] >= id1; } }");
-//		runtest("module Test{ public int[][] testArray() { arr[getIndex(100)] >= id1; } }"); // Shift reduce
+		runtest("module Test{ public int[][] testArray() { arr[getIndex(100)] >= id1; } }");
 		runtest("module Test{ public int[][] testArray() { a = 100 * -100; } }");
-//		runtest("module Test{ public int[][] testArray() { arr[100] = 100 * -100; } }"); // Shift reduce
+		runtest("module Test{ public int[][] testArray() { arr[100] = 100 * -100; } }");
 		runtest("module Test{ public int[][] testArray() { brea; } }");
 		
-		// Conflicts between ArrayType and ArrayAccess (Shift or Reduce conflict)
-		// arr[]
-		// arr[123]
-		
-//		runtest("module Test{ public int[][] testArray() { return f(a,); } }", false);
-//		runtest("module Test{ public int[][] testArray() { return [] } }", false);
-//		runtest("module Test{ public int[][] testArray() { return [a, ] } }", false);
+		runtest("module Test{ public int[][] testArray() { return f(a,); } }", false);
+		runtest("module Test{ public int[][] testArray() { return [] } }", false);
+		runtest("module Test{ public int[][] testArray() { return [a, ] } }", false);
 	}
 }

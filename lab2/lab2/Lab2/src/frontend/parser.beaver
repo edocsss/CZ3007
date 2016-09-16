@@ -80,7 +80,7 @@ Expression = Assignment | RHSExpression;
 Assignment = LHSExpression EQL Expression;
 
 LHSExpression = ID | ArrayAccess;
-ArrayAccess = LHSExpression LBRACKET Expression RBRACKET;
+ArrayAccess = ID LBRACKET Expression RBRACKET | ArrayAccess LBRACKET Expression RBRACKET;
 
 RHSExpression = ArithmeticExpression | ArithmeticExpression ComparisonOperator ArithmeticExpression;
 ComparisonOperator = EQEQ | NEQ | LT | LEQ | GT | GEQ;
@@ -95,8 +95,9 @@ Factor = MINUS Factor | PrimaryExpression;
 PrimaryExpression = LHSExpression | FunctionCall | ArrayExpression | STRING_LITERAL | INT_LITERAL | TRUE | FALSE | ParenthesizedExpression;
  
 FunctionCall = ID LPAREN ArgumentsList RPAREN;
-ArgumentsList = Argument | Argument COMMA ArgumentsList;
-Argument = Expression |;
+ArgumentsList = ArgumentsListHelper |;
+ArgumentsListHelper = Argument | Argument COMMA ArgumentsListHelper;
+Argument = Expression;
 
 ArrayExpression = LBRACKET NonEmptyExpressionList RBRACKET;
 NonEmptyExpressionList = Expression | Expression COMMA NonEmptyExpressionList;
