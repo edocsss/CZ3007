@@ -86,7 +86,7 @@ public class ParserTests {
 		runtest("module Test { public int[][] testArray(int[][] t, boolean x) {} }");
 		runtest("module Test { public int[][] testArray(Class1[][] t) {} }");
 		runtest("module Test { public int[][] testArray() {} }");
-//		runtest("module Test { public int[][] testArray(int[][] t,) {} }", false);
+		runtest("module Test { public int[][] testArray(int[][] t,) {} }", false);
 	}
 	
 	@Test
@@ -94,12 +94,35 @@ public class ParserTests {
 		runtest("module Test{ public int[][] testArray() { void t; } }");
 		runtest("module Test{ public int[][] testArray() { void t; int x; } }");
 		runtest("module Test{ public int[][] testArray() { while (x) {} } }");
-//		runtest("module Test{ public int[][] testArray() { void t int x; } }", false);
+		runtest("module Test{ public int[][] testArray() { void t int x; } }", false);
+	}
+	
+	@Test
+	public void testModuleWithModuleDeclarations_FunctionDeclaration_WhileStatement() {
+		runtest("module Test { public Class1[][] test() { while (true) {} } }");
+		runtest("module Test { public Class1[][] test() { while (x) { int x; string s; } } }");
+		runtest("module Test { public Class1[][] test() { while (x) { int[][] x; } } }");
+		runtest("module Test { public Class1[][] test() { while (x = 10) { int[][] x; } } }");
+		runtest("module Test { public Class1[][] test() { while (x = 10) { break; return x; } } }");
+		runtest("module Test { public Class1[][] test() { while (x = 10) { 100 == 129 * 120 - 120; } } }");
+		runtest("module Test { public Class1[][] test() { while (x = 10) { while (x + y == 100) { test(100 + 120 * -120); } } } }");
+		runtest("module Test { public Class1[][] test() { while (x = 10) { 100 == 100; 200 == 200; } } }");
+		runtest("module Test { public Class1[][] test() { while (x = 10) { if (x == 100) { int j; j = 1000 + (-100); } else { { string k; k = \"123\"; } } } } }");
+	}
+	
+	@Test
+	public void testModuleWithModuleDeclarations_Function_Declaration_IfStatement() {
+		runtest("module Test { public Class1 test() { if (t) f = 100; } }");
+		runtest("module Test { public Class1 test() { if (t) f = 100; else while (true) { return 123; } } }");
+		runtest("module Test { public Class1 test() { if (t) { f = 100; ttt = 1000; } else { while (true) { if (100 == 100) return true; else return false; } } } }");
+		runtest("module Test { public Class1 test() { if (t) { int f; f = 100; } else while (true) { string k; } } }");
+		runtest("module Test { public Class1 test() { else while (true) { return 123; } } }", false);
 	}
 	
 	@Test
 	public void testModuleWithModuleDeclarations_FunctionDeclaration_BreakStatement() {
 		runtest("module Test{ public int[][] testArray() { break; } }");
+		runtest("module Test{ public int[][] testArray() { break } }", false);
 	}
 	
 	@Test
@@ -116,9 +139,9 @@ public class ParserTests {
 		runtest("module Test{ public int[][] testArray() { return a = 100 * -100; } }");
 		runtest("module Test{ public int[][] testArray() { return a[(100 * 100)] = 100 * -100; } }");
 		
-//		runtest("module Test{ public int[][] testArray() { return f(a,); } }", false);
-//		runtest("module Test{ public int[][] testArray() { return [] } }", false);
-//		runtest("module Test{ public int[][] testArray() { return [a, ] } }", false);
+		runtest("module Test{ public int[][] testArray() { return f(a,); } }", false);
+		runtest("module Test{ public int[][] testArray() { return [] } }", false);
+		runtest("module Test{ public int[][] testArray() { return [a, ] } }", false);
 	}
 	
 	@Test
@@ -130,11 +153,12 @@ public class ParserTests {
 		runtest("module Test{ public int[][] testArray() { test() > (100 * 200 / 300 % 100); } }");
 		runtest("module Test{ public int[][] testArray() { test(100, \"test\", true, false) > (100 * 200 / 300 % 100); } }");
 		runtest("module Test{ public int[][] testArray() { [1, 2, 3, true, false, test(199, \"testasd\")] >= id1; } }");
-//		runtest("module Test{ public int[][] testArray() { arr[getIndex(100)] >= id1; } }");
+//		runtest("module Test{ public int[][] testArray() { arr[getIndex(100)] >= id1; } }"); // Shift reduce
 		runtest("module Test{ public int[][] testArray() { a = 100 * -100; } }");
-		runtest("module Test{ public int[][] testArray() { arr[] = 100 * -100; } }");
+//		runtest("module Test{ public int[][] testArray() { arr[100] = 100 * -100; } }"); // Shift reduce
+		runtest("module Test{ public int[][] testArray() { brea; } }");
 		
-		// Conflicts between ARrayType and ArrayAccess (Shift or Reduce conflict)
+		// Conflicts between ArrayType and ArrayAccess (Shift or Reduce conflict)
 		// arr[]
 		// arr[123]
 		
